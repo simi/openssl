@@ -268,6 +268,27 @@ module OpenSSL
         io.close if sync_close
       end
 
+      def verify_post_connection_check
+        #VALUE val;
+        #VALUE hostname;
+
+        #val = ossl_sslctx_get_verify_mode(self);
+        #verify_mode = NIL_P(val) ? SSL_VERIFY_PEER : NUM2INT(val);
+        #hostname = rb_iv_get(self, "@hostname");
+
+        if context.verify_mode == OpenSSL::SSL::VERIFY_PEER
+          raise "zomg" unless @hostname
+        end
+        @connected = true
+
+        #if (!NIL_P(hostname)) {
+        #   if (hostname)
+        #ossl_raise(eSSLError, "zomg");
+        #}
+
+        return false;
+      end
+
       ##
       # Perform hostname verification after an SSL connection is established
       #

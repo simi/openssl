@@ -69,6 +69,8 @@ static VALUE eSSLErrorWaitWritable;
 #define ossl_ssl_get_ctx(o)          rb_iv_get((o),"@context")
 #define ossl_ssl_get_x509(o)         rb_iv_get((o),"@x509")
 #define ossl_ssl_get_key(o)          rb_iv_get((o),"@key")
+#define ossl_ssl_get_connected_ctx(o, v) 	rb_iv_get((o),"@connected",(v))
+#define ossl_ssl_get_peer_verified_ctx(o, v)	rb_iv_get((o),"@peer_verified",(v))
 
 #define ossl_ssl_set_io(o,v)         rb_iv_set((o),"@io",(v))
 #define ossl_ssl_set_ctx(o,v)        rb_iv_set((o),"@context",(v))
@@ -78,6 +80,8 @@ static VALUE eSSLErrorWaitWritable;
 #define ossl_ssl_set_key(o,v)        rb_iv_set((o),"@key",(v))
 #define ossl_ssl_set_tmp_dh(o,v)     rb_iv_set((o),"@tmp_dh",(v))
 #define ossl_ssl_set_tmp_ecdh(o,v)   rb_iv_set((o),"@tmp_ecdh",(v))
+#define ossl_ssl_set_connected_ctx(o, v) 	rb_iv_set((o),"@connected",(v))
+#define ossl_ssl_set_peer_verified_ctx(o, v)	rb_iv_set((o),"@peer_verified",(v))
 
 static ID ID_callback_state;
 
@@ -1449,6 +1453,7 @@ ossl_start_ssl(VALUE self, int (*func)(), const char *funcname, VALUE opts)
 	}
     }
 
+    rb_funcall(self, rb_intern("verify_post_connection_check"), 0);
     return self;
 }
 

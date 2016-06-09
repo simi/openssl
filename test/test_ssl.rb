@@ -253,6 +253,16 @@ class OpenSSL::TestSSL < OpenSSL::SSLTestCase
     }
   end
 
+  def test_sslctx_connected
+    start_server(OpenSSL::SSL::VERIFY_NONE, true) do |server, port|
+      ctx = OpenSSL::SSL::SSLContext.new
+
+      server_connect(port, ctx) do |ssl|
+        assert ssl.connected
+      end
+    end
+  end
+
   def test_read_nonblock_without_session
     OpenSSL::TestUtils.silent do
       start_server(OpenSSL::SSL::VERIFY_NONE, false){|server, port|

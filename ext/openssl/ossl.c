@@ -392,7 +392,32 @@ ossl_debug_set(VALUE self, VALUE val)
 
 /*
  * call-seq:
- *   OpenSSL.fips_mode = boolean -> boolean
+ *   OpenSSL.fips_mode -> boolean
+ *
+ *  Returns if FIPS mode is turned on. Available only for FIPS-capable installations of
+ *  the OpenSSL libray. Results in error on non FIPS-capable installations.
+ *
+ *
+ * === Examples
+ *   # enable FIPS only if it is not enabled yet since turning on twice leads to an error
+ *   unless OpenSSL.fips_mode
+ *     OpenSSL.fips_mode = true
+ *   end
+ */
+static VALUE
+ossl_fips_mode_get(VALUE self)
+{
+
+#ifdef OPENSSL_FIPS
+    return (FIPS_mode() != 0) ? Qtrue : Qfalse;
+#else
+    ossl_raise(eOSSLError, "This version of OpenSSL does not support FIPS mode");
+#endif
+}
+
+/*
+ * call-seq:
+ *   OpenSSL.fips_mode -> boolean
  *
  * Turns FIPS mode on or off. Turning on FIPS mode will obviously only have an
  * effect for FIPS-capable installations of the OpenSSL library. Trying to do
@@ -1131,6 +1156,7 @@ Init_openssl(void)
 		   );
 
     rb_define_module_function(mOSSL, "fips_mode=", ossl_fips_mode_set, 1);
+    rb_define_module_function(mOSSL, "fips_mode", ossl_fips_mode_get, 0);
 
     /*
      * Generic error,
